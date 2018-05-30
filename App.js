@@ -1,4 +1,5 @@
 
+var TreeNode = require('treenode').TreeNode;
 /*var readline = require('readline-sync');
 var user = readline.question('ingrese el nombre que quiera: ');
 var port = 3000
@@ -187,7 +188,7 @@ function boardMove(board, playerTurnID){
 	//key = Mkeys[Math.floor(Math.random()*Mkeys.length)]
 	//value = movem[key]
 	//console.log('value',movem, turn,playerTurnID)
-	console.log(movements)
+	//console.log(movements)
 
 	return movements
 }
@@ -267,6 +268,7 @@ function leftUp(pos,turn,board){
 	var n = 0;
 	var make = false;
 	while(i<=63 && !make && board[i] != 0){
+		//console.log('hey',i)
 		i += 9;
 		//console.log(i,board[i])
 		//console.log("verificaciones",i,board[i])
@@ -317,8 +319,9 @@ function leftDown(pos,turn,board){
 			make = false
 			n+=1
 		}
-		
+		//console.log('dentro',pos,make)
 	}
+	//console.log('fuera',pos,make)
 	return make;
 }
 function rightDown(pos,turn,board){
@@ -345,7 +348,8 @@ function rightDown(pos,turn,board){
 }
 //------------CAMBIAR EL BOARD --------------------------------
 
-function boardchange(turn,board,mov){
+function boardchange(turn,bboard,mov){
+	var board = bboard.slice()
 	if (board[mov] == 0){
 		var i = mov;
 		var index = 0;
@@ -382,7 +386,8 @@ function boardchange(turn,board,mov){
 	return board
 }
 //----------------------------FUNCIONES PARA CAMBIAR EL BOARD ----------------
-function changeUP(board,move,turn){
+function changeUP(bboard,move,turn){
+	var board = bboard.slice()
 	board[move] = turn;
 	var i = move + 8;
 	while(i<=63 && board[i]!=turn){
@@ -392,7 +397,8 @@ function changeUP(board,move,turn){
 	}
 	return board;					
 }
-function changeDown(board,move,turn){
+function changeDown(bboard,move,turn){
+	var board = bboard.slice()
 	board[move] = turn;
 	var i = move - 8;
 	while(i>=0 && board[i]!=turn){
@@ -401,7 +407,8 @@ function changeDown(board,move,turn){
 		i-=8;
 	}
 	return board;		
-}function changeLeft(board,move,turn){
+}function changeLeft(bboard,move,turn){
+	var board = bboard.slice()
 	board[move] = turn;
 	var i = move + 1;
 	while(i<=63 && board[i]!=turn){
@@ -411,7 +418,8 @@ function changeDown(board,move,turn){
 	}
 	return board;
 	
-}function changeRight(board,move,turn){
+}function changeRight(bboard,move,turn){
+	var board = bboard.slice()
 	board[move] = turn;
 	var i = move - 1;
 	while(i>=0 && board[i]!=turn){
@@ -420,7 +428,8 @@ function changeDown(board,move,turn){
 		i-=1;
 	}
 	return board;
-}function changeLDown(board,move,turn){
+}function changeLDown(bboard,move,turn){
+	var board = bboard.slice()
 	board[move] = turn;
 	var i = move + 9;
 	while(i<=63 && board[i]!=turn){
@@ -429,7 +438,8 @@ function changeDown(board,move,turn){
 		i+=9;
 	}
 	return board;	
-}function changeRDown(board,move,turn){
+}function changeRDown(bboard,move,turn){
+	var board = bboard.slice()
 	board[move] = turn;
 	var i = move + 7;
 	while(i<=63 && board[i]!=turn){
@@ -438,7 +448,8 @@ function changeDown(board,move,turn){
 		i+=7;
 	}
 	return board;
-}function changeLUp(board,move,turn){
+}function changeLUp(bboard,move,turn){
+	var board = bboard.slice()
 	board[move] = turn;
 	var i = move - 7;
 	while(i>=0 && board[i]!=turn){
@@ -447,7 +458,8 @@ function changeDown(board,move,turn){
 		i-=7;
 	}
 	return board;	
-}function changeRUp(board,move,turn){
+}function changeRUp(bboard,move,turn){
+	var board = bboard.slice()
 	board[move] = turn;
 	var i = move - 9;
 	while(i>=0 && board[i]!=turn){
@@ -459,14 +471,21 @@ function changeDown(board,move,turn){
 }
 //console.log(user,port,tournamentID);
 ///ARBOL----------------------------------------------------------------------------
+
 /*
-console.log('finals',nodeTree(actual,1,0))
-function nodeTree(board, playerTurnID,level){
+var arbol ={}
+var tableros = {}
+tableros[0] = actual
+var node_num = 0
+var childs = []
+n = 0
+console.log('finals',nodeTree(actual,1,0,tableros,childs))
+function nodeTree(board, playerTurnID,level,tableros,childs){
 	var new_board = []
+
 	var actual_board = board.slice();
 	var movs = boardMove(actual_board, playerTurnID)
 	
-	var childs = []
 	var turn = 0
 	if(playerTurnID ==1 ){
 		turn = 2
@@ -478,18 +497,208 @@ function nodeTree(board, playerTurnID,level){
 		turn = 1
 		level+=1
 	}
+
 	for(var i =0;i<movs.length;i++){
+
 		console.log('level', level)
 		console.log('mov ', movs[i], movs)
 		new_board = boardchange(playerTurnID,actual_board,movs[i])
 		printBoard(new_board)
+		//console.log(node_num)
+		console.log('h',i,childs)
+		node_num += 1
+		childs.push(node_num)
+		if(i == movs.length -1){
+			arbol[n] = childs
+			n+=1
+			var childs = []
+		}
+		console.log('childs',childs)
+		console.log('this',node_num)
+		tableros[node_num] = new_board
 		actual_board = board.slice();
-		if (level < 4){
-			nodeTree(new_board,turn,level)
+		if (level < 2){
+			nodeTree(new_board,turn,level,tableros,childs)
 		}
 		
 	}
-	return movems
-}*/
-function makeTree
+	
 
+
+	return movems
+}
+
+//console.log(tableros)
+console.log(node_num)
+console.log(arbol)
+*/
+
+var movs = boardMove(actual, 1)
+printBoard(actual)
+var tree = new TreeNode({id:0, name:'root',board:actual,movements:movs,turn:playerTurnID,value:0})
+var n = 0
+var level = 1
+
+function makeTree(node,n,level){
+	n+=1
+	
+	var turn = node.data.turn
+	console.log('TURN',turn)
+	for(var i = 0;i<node.data.movements.length;i++){
+		var board = boardchange(turn,node.data.board,node.data.movements[i])
+		console.log('before')
+		printBoard(node.data.board)
+		var movements = boardMove(board, 2)
+		var name  = "node "+i+"-"+node.data.movements[i]
+		var new_node = node.addChild({id:n, name: name,board:board,movements:movements,turn:turn,value:0})
+		console.log('after')
+		printBoard(new_node.data.board)
+
+	}
+
+	if(turn == 1){
+		turn = 2
+	}else{
+		turn = 1
+	}
+	console.log('------------------------------------------------------------')
+	console.log('TURN',turn)
+	n+=1
+	tree.forEach(function(element) {
+		if(element.data.id ==1){
+			 
+			for(var i = 0;i<element.data.movements.length;i++){
+				var board = boardchange(turn,element.data.board,element.data.movements[i])
+				console.log('before')
+				printBoard(element.data.board)
+				var movements = boardMove(board, 1)
+				var name  = "node "+i+"-"+element.data.movements[i]
+				var new_node = element.addChild({id:n, name: name,board:board,movements:movements,turn:turn,value:0})
+				console.log('after')
+				printBoard(new_node.data.board)
+
+			} 
+			console.log(element.data.name,element.numChildren())
+		}
+			
+ 	})
+ 	if(turn == 1){
+		turn = 2
+	}else{
+		turn = 1
+	}
+	console.log('------------------------------------------------------------')
+	console.log('TURN2',turn)
+	tree.forEach(function(element) {
+		if(element.data.id ==2){
+			n+=1 
+			for(var i = 0;i<element.data.movements.length;i++){
+				var board = boardchange(turn,element.data.board,element.data.movements[i])
+				console.log('before')
+				printBoard(element.data.board)
+				var movements = boardMove(board, 2)
+				var name  = "node "+i+"-"+element.data.movements[i]
+				var new_node = element.addChild({id:n, name: name,board:board,movements:movements,turn:turn})
+				console.log('after')
+				printBoard(new_node.data.board)
+
+			} 
+			console.log(element.data.name,element.numChildren())
+		}
+		
+	})
+	//console.log('num',tree.numChildren())
+
+}
+makeTree(tree,n,level)
+console.log('num',tree.numChildren())
+var count  = 0
+tree.forEach(function(element) {
+	count+=1
+ });
+console.log('count ',count)
+
+/*  function MinMax(game){
+ 	return MaxMove(game)
+ }
+ function MaxMove(game){
+ 	console.log('max',game[1])
+ 	//printBoard(game[0])
+ 	if(GameEnded(game)){
+ 		return EvalGameState(game);
+ 	}else{
+ 		var best_move = [];
+ 		var moves = GenerateMoves(game);
+ 		console.log(moves)
+ 		for(var i = 0;i<moves.length;i++){
+ 			game[2] = moves[i]
+ 			var applyMove = ApplyMove(game);
+ 			var move = MinMove(applyMove);
+ 			if (Value(move) > Value(best_move)){
+ 				best_move = move;
+ 			}
+ 		}
+ 		return best_move;
+ 	}
+ }
+ function MinMove(game){
+ 	console.log('min',game[1])
+ 	//printBoard(game[0])
+ 	var best_move = [];
+ 	var moves = GenerateMoves(game)
+ 	console.log(moves)
+ 	for(var i = 0;i<moves.length;i++){
+		var applyMove = ApplyMove(game);
+		var move = MaxMove(applyMove);
+		if (Value(move) > Value(best_move)){
+			best_move = move;
+		}
+	}
+	return best_move;
+ }
+ var game = [actual,playerTurnID,0]
+ function GenerateMoves(game){
+ 	return boardMove(game[0], game[1])
+ }
+ function ApplyMove(game){
+ 	if(game[1] == 1){
+		game[1] = 2
+	}else{
+		game[1] = 1
+
+	}
+ 	var move = [boardchange(game[1],game[0],game[2]),game[1],game[2]]
+ 	return move
+ }
+ function GameEnded(game){
+ 	if(boardMove(game[0], game[1]) == null){
+ 		return true
+ 	}else{
+ 		return false
+ 	}
+ }
+ function EvalGameState(game){
+ 	var one = 0
+ 	var two = 0
+ 	for(var i = 0;i<game[0].length;i++){
+ 		if(game[0][i] == 1){
+ 			one += 1
+ 		}if(game[0][i] == 1){
+ 			two += 1
+ 		}
+ 	}
+ 	if(one>two){
+ 		game[1] = 1
+ 	}else{
+ 		game[1] = 2
+ 	}
+ 	game[2] = 'finish'
+ 	console.log(game[2])
+ 	console.log('player ',game[1],' won')
+ 	printBoard(game[0])
+ 	return game 
+ }
+ function Value(move){
+ 	return 1
+ }
+ var fin = MinMax(game)*/
